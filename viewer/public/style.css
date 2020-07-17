@@ -1,0 +1,31 @@
+html,
+body,
+#mapid {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.dataColorScaleContainer {
+    width: 200px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 5px;
+}
+
+.dataColorScaleGradient {
+    width: 80%;
+    height: 30px;
+}
+
+.dataColorScaleBounds {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
