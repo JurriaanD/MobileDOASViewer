@@ -8,22 +8,74 @@
 
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-
     <!-- Mapbox GL -->
     <link rel="stylesheet" href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css' />
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.js'></script>
     <!-- Mapbox Leaflet bindings -->
-    <script src="https://unpkg.com/mapbox-gl-leaflet/leaflet-mapbox-gl.js"></script>
-    <link rel="stylesheet" href="/style.css"/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css"></style>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"></style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
+    </style>
+
+    <link rel="stylesheet" href="/style.css" />
 </head>
 
 <body>
-    <div id="mapid"></div>
+    <div id="content">
+        <div id="mainPane" class="pane">
+            <div id="mapPane" class="pane">
+                <div id="mapid"></div>
+            </div>
+            <div id="chartPane" class="pane">
+                <div class="chart-container" style="position: relative; height: 100%;">
+                    <canvas id="chartCanvas" style="width: 100%; height: 100%;"></canvas>
+                    <!-- <canvas id="chartCanvas"></canvas> -->
+                </div>
+            </div>
+        </div>
+        <div id="rightPane" class="pane">
+            Data goes here
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("test"); 
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "blue";
+        console.log(canvas.height);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    </script>
+
+
+    <!-- Split panes -->
+    <script src="https://unpkg.com/split.js/dist/split.min.js"></script>
+    <!-- Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <!-- Chroma (color lerping) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.0/chroma.min.js"></script>
+    <!-- Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <!-- Mapbox -->
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.js'></script>
+    <script src="https://unpkg.com/mapbox-gl-leaflet/leaflet-mapbox-gl.js"></script>
+    <!-- Marker Clustering -->
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script>
+        const resizeEndEvent = new Event("resizeEnd");
+        Split(["#mainPane", "#rightPane"], {
+            gutterSize: 3,
+            sizes: [80, 20],
+            minSize: [100, 0],
+            onDragEnd: () => document.dispatchEvent(resizeEndEvent)
+        })
+        Split(["#mapPane", "#chartPane"], {
+            gutterSize: 3,
+            sizes: [70, 30],
+            minSize: [100, 0],
+            direction: "vertical",
+            onDragEnd: () => document.dispatchEvent(resizeEndEvent)
+        })
+
+    </script>
     <script src="/script.js"></script>
 </body>
 
