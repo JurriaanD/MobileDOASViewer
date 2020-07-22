@@ -14,7 +14,7 @@
                 }],
                 yAxes: [{
                     display: true,
-                    type: "logarithmic",
+                    type: "logarithmic"
                 }]
             },
             elements: {
@@ -24,6 +24,9 @@
             }
         }
     });
+    // Initializing the chart as logarithmic gives it nice properties (scientific notation and right number of ticks)
+    // You can probably do this with some options, but this works
+    chart.options.scales.yAxes[0].type = "linear"; chart.update();
 
     window.addEventListener("DOASDataReceived", e => {
         let label = window.settings.visualizeCol;
@@ -47,4 +50,9 @@
         }
         chart.update();
     });
+
+    window.addEventListener("DOASScaleChanged", e => {
+        chart.options.scales.yAxes[0].type = window.settings.useLogScale ? "logarithmic" : "linear";
+        chart.update();
+    })
 })();

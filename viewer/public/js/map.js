@@ -17,51 +17,54 @@
     const dataColors = ["#1e9600", "#fff200", "#ff0000"];
     const colorGradient = chroma.scale(dataColors).mode("lab");
     const dataBounds = new class {
-        min = Infinity;
-        max = -Infinity;
+        _dynamicMin = Infinity;
+        _dynamicMax = -Infinity;
 
-        get bounds() {
-            return {
-                min,
-                max
-            };
+        get min() {
+            if (window.settings === undefined || window.settings.bounds === undefined || window.settings.bounds.min === null) {
+                return this._dynamicMin;
+            }
+            return window.settings.bounds.min;
+        }
+
+        get max() {
+            if (window.settings === undefined || window.settings.bounds === undefined || window.settings.bounds.max === null) {
+                return this._dynamicMax;
+            }
+            return window.settings.bounds.max;
         }
 
         set(min, max) {
-            // FIXME: does this condition actually make sense?
-            if (window.settings.bounds.min === null || window.settings.bounds.min === undefined)
-                this.min = min;
-            if (window.settings.bounds.max === null || window.settings.bounds.max === undefined)
-                this.max = max;
-            this._onUpdate();
+            this._dynamicMin = min;
+            this._dynamicMax = max;
+            this.update();
         }
 
-        setUnsafe(min, max) {
-            if (min !== null && min !== undefined)
-                this.min = min;
-            if (max !== null && max !== undefined)
-                this.max = max;
-            this._onUpdate();
-        }
-
-        // TODO: recolor all (visible) markers
-        _onUpdate() {
+        update() {
             dataColorScale.remove();
             dataColorScale = L.DataColorScale({
                 position: 'bottomleft'
             }).addTo(map);
+            updateMarkerColors();
         }
     }
     const getMarkerColor = val => {
-        return colorGradient(linearMap(Math.log(val), Math.log(dataBounds.min), Math.log(dataBounds.max), 0, 1)).alpha(0.8);
+        let f = window.settings.useLogScale ? x => Math.log(x) : x => x;
+        // Using a logarithmic scale is not compatible with negative values 
+        let mappedMin = f(dataBounds.min);
+        if (isNaN(mappedMin)) mappedMin = 0;
+        return colorGradient(linearMap(f(val), mappedMin, f(dataBounds.max), 0, 1)).alpha(0.8);
     };
 
     window.addEventListener("DOASBoundsChange", e => {
-        dataBounds.setUnsafe(e.details.min, e.details.max);
+        dataBounds.update();
     });
 
     L.Control.DataColorScale = L.Control.extend({
         onAdd: m => {
+            if (dataBounds.min === undefined) {
+                //console.log(window.settings, window.settings.scaleLowerBound, window.settings.scaleUpperBound);
+            }
             const container = L.DomUtil.create("div", "dataColorScaleContainer");
             const gradient = L.DomUtil.create("div", "dataColorScaleGradient", container);
             gradient.style.background = `linear-gradient(to right,${dataColors.join(',')})`;
@@ -129,17 +132,71 @@
     map.addLayer(markerClusters);
 
     /* Util */
-    function linearMap(val, min, max, mappedMin, mappedMax) {
-        return (max - val) / (max - min) * (mappedMax - mappedMin) + mappedMin;
+    const updateMarkerColors = () => {
+        for (let marker of markers) {
+            marker.setStyle({
+                color: getMarkerColor(marker.options.value).toString()
+            });
+        }
+    }
+
+    const clamp = (min, val, max) => {
+        if (val < min) return min;
+        if (val > max) return max;
+        return val;
+    }
+
+    const linearMap = (val, min, max, mappedMin, mappedMax) => {
+        val = clamp(min, val, max);
+        return (val - min) / (max - min) * (mappedMax - mappedMin) + mappedMin;
     }
 
     window.addEventListener("resizeEnd", () => map.invalidateSize());
     window.addEventListener("DOASDataReceived", e => {
-        let min = e.detail.reduce((acc, { value }) => Math.min(acc, value), Infinity);
-        let max = e.detail.reduce((acc, { value }) => Math.max(acc, value), -Infinity);
+        let min = e.detail.reduce((acc, {
+            value
+        }) => Math.min(acc, value), Infinity);
+        let max = e.detail.reduce((acc, {
+            value
+        }) => Math.max(acc, value), -Infinity);
         dataBounds.set(min, max);
         markerClusters.removeLayers(markers);
-        markers = e.detail.map(({ lat, long, value}) => L.DataMarker(lat, long, value));
+        markers = e.detail.map(({
+            lat,
+            long,
+            value
+        }) => L.DataMarker(lat, long, value));
         markerClusters.addLayers(markers);
     });
+    window.addEventListener("DOASScaleChanged", updateMarkerColors);
+    map.on("moveend", () => {
+        const bounds = map.getBounds();
+        let visibleMarkers = markers.filter(marker => bounds.contains(marker.getLatLng()));
+        if (visibleMarkers.length == 0) return;
+        let min = visibleMarkers.reduce((acc, marker) => Math.min(acc, marker.options.value), Infinity);
+        let max = visibleMarkers.reduce((acc, marker) => Math.max(acc, marker.options.value), -Infinity);
+        dataBounds.set(min, max);
+    });
+
+
+    const followCarButton = L.easyButton({
+        states: [{
+                stateName: "start-following",
+                icon:      "fa-location-arrow",
+                title:     "Follow the car",
+                onClick: function(btn, map) {
+                    btn.state("stop-following"); 
+                    console.log("Toggle 1");
+                }
+            }, {
+                stateName: "stop-following",
+                icon:      "fa-compass",
+                title:     "Stop following the car",
+                onClick: function(btn, map) {
+                    btn.state("start-following");
+                    console.log("Toggle 2");
+                }
+        }]
+    });
+    followCarButton.addTo(map);
 })();
