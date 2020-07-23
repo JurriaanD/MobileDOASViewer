@@ -1,11 +1,23 @@
 "use strict";
 (() => {
+    const areArraysEqual = (a1, a2) => {
+        if (!(a1 instanceof Array) || !(a2 instanceof Array)) return false;
+        if (a1.length != a2.length) return false;
+        for (let i = 0; i < a1.length; i++) {
+            if (a1[i] !== a2[i]) return false;
+        }
+        return true;
+    }
+
     let prevColumns = null;
 
     const fetchData = () => {
         fetch(new Request("/data"))
         // TODO: handle non-200 OK responses
-        .then(res => res.json())
+        .then(res => {
+            if (res.status === 200) { return res.json(); }
+            return Promise.resolve([]);
+        })
         .then(measurements => {
             if (!window.data) window.data = {};
 
@@ -17,7 +29,8 @@
             // Only fire an event for the columns if they've changed
             // This will most likely only happen on startup (null -> actual value)
             window.data.columns = Object.getOwnPropertyNames(measurements[0]);
-            if (window.data.columns != prevColumns) {
+            if (!areArraysEqual(window.data.columns, prevColumns)) {
+                console.log("New Columns");
                 prevColumns = window.data.columns;
                 window.dispatchEvent(new CustomEvent("DOASColumnsReceived", { detail: window.data.columns }));
             } else {
@@ -48,5 +61,5 @@
     window.addEventListener("DOASColumnSettingsChanged", processData);
 
     fetchData();
-    // setInterval(5000, fetchData);
+    setInterval(fetchData, 5000);
 })();

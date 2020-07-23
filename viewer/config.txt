@@ -1,0 +1,13 @@
+[data]
+# Location of the data file that needs to be visualized
+#file_path = "measurements.dat"
+file_path = "./../producer/output.dat"
+# The delimiter that is used to seperate columns
+# Common values are ",", ";", " " and "\t" (tab)
+delimiter = "\t"
+# The character that is used to indicate the end of a line in the data file
+# Usually "\n" if the file was generated on UNIX-like systems and "\r\n" if generated on Windows
+EOL_character = "\n"
+
+[server]
+port = 3000

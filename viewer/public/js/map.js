@@ -151,15 +151,17 @@
         return (val - min) / (max - min) * (mappedMax - mappedMin) + mappedMin;
     }
 
+    const setDynamicBounds = () => {
+        const bounds = map.getBounds();
+        let visibleMarkers = markers.filter(marker => bounds.contains(marker.getLatLng()));
+        if (visibleMarkers.length == 0) return;
+        let min = visibleMarkers.reduce((acc, marker) => Math.min(acc, marker.options.value), Infinity);
+        let max = visibleMarkers.reduce((acc, marker) => Math.max(acc, marker.options.value), -Infinity);
+        dataBounds.set(min, max);
+    }
+
     window.addEventListener("resizeEnd", () => map.invalidateSize());
     window.addEventListener("DOASDataReceived", e => {
-        let min = e.detail.reduce((acc, {
-            value
-        }) => Math.min(acc, value), Infinity);
-        let max = e.detail.reduce((acc, {
-            value
-        }) => Math.max(acc, value), -Infinity);
-        dataBounds.set(min, max);
         markerClusters.removeLayers(markers);
         markers = e.detail.map(({
             lat,
@@ -167,16 +169,10 @@
             value
         }) => L.DataMarker(lat, long, value));
         markerClusters.addLayers(markers);
+        setDynamicBounds();
     });
     window.addEventListener("DOASScaleChanged", updateMarkerColors);
-    map.on("moveend", () => {
-        const bounds = map.getBounds();
-        let visibleMarkers = markers.filter(marker => bounds.contains(marker.getLatLng()));
-        if (visibleMarkers.length == 0) return;
-        let min = visibleMarkers.reduce((acc, marker) => Math.min(acc, marker.options.value), Infinity);
-        let max = visibleMarkers.reduce((acc, marker) => Math.max(acc, marker.options.value), -Infinity);
-        dataBounds.set(min, max);
-    });
+    map.on("moveend", () => setDynamicBounds);
 
 
     const followCarButton = L.easyButton({
