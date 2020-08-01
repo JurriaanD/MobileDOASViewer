@@ -119,3 +119,8 @@ h6 {
 .splitter>.split-block {
     overflow: auto;
 }
+
+/* Remove padding in control buttons */
+.leaflet-touch .leaflet-bar button {
+    padding: 0;
+}

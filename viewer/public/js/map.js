@@ -17,8 +17,8 @@
     const dataColors = ["#1e9600", "#fff200", "#ff0000"];
     const colorGradient = chroma.scale(dataColors).mode("lab");
     const dataBounds = new class {
-        _dynamicMin = Infinity;
-        _dynamicMax = -Infinity;
+        _dynamicMin = 0;
+        _dynamicMax = 1;
 
         get min() {
             if (window.settings === undefined || window.settings.bounds === undefined || window.settings.bounds.min === null) {
@@ -170,8 +170,14 @@
     const followCar = () => {
         if (markers.length == 0) return;
         let relevantMarkers = markers.slice(-1 * window.settings.nbPointsToTrack);
-        let bounds = L.latLngBounds(relevantMarkers.map(marker => marker.getLatLng()));
-        map.fitBounds(bounds);
+        let markerBounds = L.latLngBounds(relevantMarkers.map(marker => marker.getLatLng()));
+        let currentMarkerLatLong = markers[markers.length - 1].getLatLng();
+        let deltaLat = Math.max(Math.abs(currentMarkerLatLong.lat - markerBounds.getNorth()), Math.abs(currentMarkerLatLong.lat - markerBounds.getSouth()));
+        let deltaLong = Math.max(Math.abs(currentMarkerLatLong.lng - markerBounds.getEast()), Math.abs(currentMarkerLatLong.lng - markerBounds.getWest()));
+        let viewportBounds = L.latLngBounds(
+            L.latLng(currentMarkerLatLong.lat - deltaLat, currentMarkerLatLong.lng + deltaLong),
+            L.latLng(currentMarkerLatLong.lat + deltaLat, currentMarkerLatLong.lng - deltaLong)); 
+        map.fitBounds(viewportBounds);
     }
 
     window.addEventListener("resizeEnd", () => map.invalidateSize());
@@ -207,7 +213,7 @@
             }
         }, {
             stateName: "stop-following",
-            icon: "fa-compass",
+            icon: "<img src='/openhand.svg' style='width:30px;'/>",
             title: "Stop following the car",
             onClick: function (btn, map) {
                 btn.state("start-following");
