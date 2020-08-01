@@ -16,6 +16,6 @@ except:
     pass
 for line in lines:
     open("output.dat", "a").write(line)
-    sleep(1)
+    sleep(5)
 
 os.remove("output.dat")

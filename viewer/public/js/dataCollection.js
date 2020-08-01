@@ -61,5 +61,5 @@
     window.addEventListener("DOASColumnSettingsChanged", processData);
 
     fetchData();
-    setInterval(fetchData, 5000);
+    //setInterval(fetchData, 5000);
 })();

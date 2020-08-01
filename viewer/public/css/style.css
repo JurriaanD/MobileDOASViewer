@@ -4,6 +4,65 @@ body {
     height: 100%;
     padding: 0;
     margin: 0;
+    font-size: 16px;
+    line-height: 20px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+:root {
+    --primary-text-color: black;
+    --subtle-text-color: #7a7a7a;
+    --accent-color: #b11adc;
+}
+
+/* Layout */
+.d-iflex {
+    display: inline-flex;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+/* Typography */
+.bold {
+    font-weight: bold;
+}
+
+h1 {
+    margin: 1rem 0;
+    font-size: 2em;
+}
+
+h2 {
+    margin: 0.9rem 0;
+    font-size: 1.6em;
+}
+
+h3 {
+    margin: 0.75rem 0;
+    font-size: 1.4em;
+}
+
+h4 {
+    margin: 0.5rem 0;
+    font-size: 1.2em;
+}
+
+h5 {
+    font-size: 1em;
+}
+
+h6 {
+    font-size: 0.8em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: bold;
+    font-style: normal;
 }
 
 #mapid {
@@ -14,7 +73,6 @@ body {
 #content {
     width: 100%;
     height: 100%;
-    display: flex;
 }
 
 .pane {

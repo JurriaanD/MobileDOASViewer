@@ -1,0 +1,177 @@
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9001;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.visible {
+    display: flex;
+    animation: showModal 0.2s;
+    transform: scale(1);
+}
+
+@keyframes showModal {
+    from {
+        scale: 0;
+    }
+
+    to {
+        scale: 1;
+    }
+}
+
+.modal-content {
+    width: 60%;
+    max-height: 80%;
+    overflow-y: auto;
+    background-color: #fff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+}
+
+.modal.visible .modal-content {
+    scale: 1;
+}
+
+.modal-body {
+    padding: 15px;
+}
+
+.modal-footer {
+    border-top: 1px solid #888;
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px 15px;
+}
+
+
+/* Buttons */
+.btn {
+    background: transparent;
+    text-decoration: none;
+    text-transform: capitalize;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 500;
+    border: none;
+    border-radius: 3px;
+    color: var(--primary-text-color);
+    line-height: 32px;
+    padding: 0 16px;
+}
+
+.btn:hover {
+    filter: brightness(110%);
+}
+
+.btn::-moz-focus-inner {
+    border: 0;
+}
+
+.btn-filled {
+    background-color: #2196f3;
+    color: white;
+}
+
+/* Form */
+.form-row {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.form-field {
+    flex-grow: 1;
+    background: #eee;
+    border-radius: 10px 10px 0 0;
+    padding: 5px 15px;
+    margin: 16px;
+    -webkit-transition: all 0.4s;
+    transition: all 0.4s;
+    position: relative;
+}
+
+.form-field::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background: var(--accent-color);
+    visibility: hidden;
+    border-radius: 5px;
+    transform: scaleX(0);
+    transition: .25s linear;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.form-field:focus-within>label {
+    color: var(--accent-color);
+}
+
+.form-field:focus-within:before {
+    visibility: visible;
+    transform: scaleX(1);
+}
+
+.form-field>label,
+.form-field>input,
+.form-field>select {
+    display: block;
+}
+
+.form-field>label {
+    font-size: 0.75rem;
+    color: var(--subtle-text-color);
+}
+
+.form-field>input {
+    width: 100%;
+}
+
+input {
+    background: transparent;
+    border: none;
+    color: black;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+select {
+    background: transparent;
+    color: var(--primary-text-color);
+    border: none;
+    width: 100%;
+
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%237a7a7a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat, repeat;
+    /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
+    background-position: right .7em top 50%, 0 0;
+    /* icon size, then gradient */
+    background-size: .65em auto, 100%;
+}

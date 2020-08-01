@@ -17,28 +17,76 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
 
-    <link rel="stylesheet" href="/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/modal.css" />
+    <link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body>
     <div id="content">
-        <div id="mainPane" class="pane">
-            <div id="mapPane" class="pane">
-                <div id="mapid"></div>
-            </div>
-            <div id="chartPane" class="pane">
-                <div class="chart-container" style="position: relative; height: 100%;">
-                    <canvas id="chartCanvas" style="width: 100%; height: 100%;"></canvas>
-                </div>
+        <div id="mapPane" class="pane">
+            <div id="mapid"></div>
+        </div>
+        <div id="chartPane" class="pane">
+            <div class="chart-container" style="position: relative; height: 100%;">
+                <canvas id="chartCanvas" style="width: 100%; height: 100%;"></canvas>
             </div>
         </div>
-        <div id="rightPane" class="pane">
-            Lat: <select id="settingsSelectLat"></select><br>
-            Long: <select id="settingsSelectLong"></select><br>
-            Visualize: <select id="settingsSelectVisualize"></select><br>
-            Color code from <input type="number" step="1" value="" id="settingsLowerBound" /> to <input type="number" step="1" value="" id="settingsUpperBound"/><br>
-            <input type="checkbox" value=true id="settingsCheckUseLog" /> Use log scale <br>
-            Keep last <input type="number" step="1" min="1" value="" id="settingsNbPointsToTrack" /> measurements in view while in auto-follow modus
+    </div>
+
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h4>Data</h4>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>Latitude column</label>
+                        <select id="settingsSelectLat"></select>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Longitude column</label>
+                        <select id="settingsSelectLong"></select>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Column to visualize</label>
+                        <select id="settingsSelectVisualize"></select>
+                    </div>
+                </div>
+
+                <h4>Plotting</h4>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>Color range lower bound</label>
+                        <input type="number" step="1" value="" id="settingsLowerBound"/>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Color range upper bound</label>
+                        <input type="number" step="1" value="" id="settingsUpperBound" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="settingsCheckUseLog">Scaling</label>
+                        <input type="checkbox" value=true id="settingsCheckUseLog" style="display:inline-block; width: auto;"/>
+                        <div style="display:inline-block;">Use logarithmic scale</div>
+                    </div>
+                </div>
+
+                <h4>Follow mode</h4>
+                <div class="form-field">
+                    <label for="settingsNbPointsToTrack" >Number of measurements to keep in view while in Follow Mode</label>
+                    <input type="number" step="1" min="1" value="" id="settingsNbPointsToTrack" />
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="closeSettingsModalButton">Cancel</button>
+                <button class="btn btn-filled" id="saveSettingsModalButton">Save</button>
+            </div>
         </div>
     </div>
 
@@ -52,18 +100,12 @@
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
     <!-- Mapbox -->
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.js'></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js'></script>
     <script src="https://unpkg.com/mapbox-gl-leaflet/leaflet-mapbox-gl.js"></script>
     <!-- Marker Clustering -->
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <script>
         const resizeEndEvent = new Event("resizeEnd");
-        Split(["#mainPane", "#rightPane"], {
-            gutterSize: 3,
-            sizes: [80, 20],
-            minSize: [100, 0],
-            onDragEnd: () => window.dispatchEvent(resizeEndEvent)
-        })
         Split(["#mapPane", "#chartPane"], {
             gutterSize: 3,
             sizes: [70, 30],
@@ -71,7 +113,6 @@
             direction: "vertical",
             onDragEnd: () => window.dispatchEvent(resizeEndEvent)
         })
-
     </script>
     <script src="js/map.js"></script>
     <script src="js/chart.js"></script>

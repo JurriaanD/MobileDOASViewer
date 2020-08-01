@@ -113,20 +113,27 @@
             }
 
             const divIcon = new L.DivIcon({
-                html: '<div><span>' + childCount + '</span></div>',
+                html: `<div style="background-color:${getMarkerColor(this.getValue(cluster)).toString()}"><span>${childCount}</span></div>`,
                 className: 'marker-cluster' + c,
-                iconSize: new L.Point(40, 40)
+                iconSize: new L.Point(20, 20)
             });
             // icon.style.backgroundColor = getMarkerColor(getValue()).toString();
             return divIcon;
         },
 
-        disableClusteringAtZoom: 1,
+        disableClusteringAtZoom: 20,
         //animateAddingMarkers: true,
-        maxClusterRadius: 30,
+        maxClusterRadius: 10,
 
-        getValue: () => {
-            return cluster.getAllChildMarkers().reduce((acc, marker) => acc + marker.getValue(), 0) / cluster.getAllChildMarkers().length;
+        getValue: (cluster) => {
+            let children = cluster.getAllChildMarkers();
+            let s = 0;
+            for (let i = 0; i < children.length; i++) {
+                let child = children[i];
+                s += child.options.value;
+            }
+            return s / children.length;
+            // return cluster.getAllChildMarkers().reduce((acc, marker) => acc + marker.getValue(), 0) / cluster.getAllChildMarkers().length;
         }
     });
     map.addLayer(markerClusters);
@@ -160,8 +167,16 @@
         dataBounds.set(min, max);
     }
 
+    const followCar = () => {
+        if (markers.length == 0) return;
+        let relevantMarkers = markers.slice(-1 * window.settings.nbPointsToTrack);
+        let bounds = L.latLngBounds(relevantMarkers.map(marker => marker.getLatLng()));
+        map.fitBounds(bounds);
+    }
+
     window.addEventListener("resizeEnd", () => map.invalidateSize());
     window.addEventListener("DOASDataReceived", e => {
+        // Update markers
         markerClusters.removeLayers(markers);
         markers = e.detail.map(({
             lat,
@@ -169,7 +184,13 @@
             value
         }) => L.DataMarker(lat, long, value));
         markerClusters.addLayers(markers);
+        // Update color bounds based on the visible markers
         setDynamicBounds();
+        // If follow mode is on, zoom and pan
+        if (window.settings.followCar) {
+            followCar();
+        }
+
     });
     window.addEventListener("DOASScaleChanged", updateMarkerColors);
     map.on("moveend", () => setDynamicBounds);
@@ -177,22 +198,43 @@
 
     const followCarButton = L.easyButton({
         states: [{
-                stateName: "start-following",
-                icon:      "fa-location-arrow",
-                title:     "Follow the car",
-                onClick: function(btn, map) {
-                    btn.state("stop-following"); 
-                    console.log("Toggle 1");
-                }
-            }, {
-                stateName: "stop-following",
-                icon:      "fa-compass",
-                title:     "Stop following the car",
-                onClick: function(btn, map) {
-                    btn.state("start-following");
-                    console.log("Toggle 2");
-                }
+            stateName: "start-following",
+            icon: "fa-location-arrow",
+            title: "Follow the car",
+            onClick: function (btn, map) {
+                btn.state("stop-following");
+                window.settings.followCar = true;
+            }
+        }, {
+            stateName: "stop-following",
+            icon: "fa-compass",
+            title: "Stop following the car",
+            onClick: function (btn, map) {
+                btn.state("start-following");
+                window.settings.followCar = false;
+            }
         }]
     });
     followCarButton.addTo(map);
+
+    // Settings modal
+    const settingsModal = document.getElementById("settingsModal");
+
+    L.easyButton('fa-gear', () => {
+        settingsModal.classList.add("visible");
+    }).addTo(map);
+
+    document.getElementById("closeSettingsModalButton").addEventListener("click", () => {
+        settingsModal.classList.remove("visible");
+    });
+
+    document.getElementById("saveSettingsModalButton").addEventListener("click", () => {
+        settingsModal.classList.remove("visible");
+    });
+
+    window.addEventListener("click", e => {
+        if (e.target === settingsModal) {
+            settingsModal.classList.remove("visible");
+        }
+    });
 })();

@@ -120,6 +120,6 @@
     /* Number of points to keep in viewport */
     nbPointsToTrackInput.addEventListener("keyup", blurOnEnter);
     nbPointsToTrackInput.addEventListener("blur", e => {
-        // TODO
+        window.settings.nbPointsToTrack = nbPointsToTrackInput.value == "" ? 0 : nbPointsToTrackInput.value;
     });
 })();
