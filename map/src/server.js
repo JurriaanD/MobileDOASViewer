@@ -102,14 +102,6 @@ function start(opts) {
 
   app.use('/data/', serve_data.init(options, serving.data));
   app.use('/styles/', serve_style.init(options, serving.styles));
-  if (serve_rendered) {
-    startupPromises.push(
-      serve_rendered.init(options, serving.rendered)
-        .then(sub => {
-          app.use('/styles/', sub);
-        })
-    );
-  }
 
   let addStyle = (id, item, allowMoreData, reportFonts) => {
     let success = true;
@@ -213,9 +205,7 @@ function start(opts) {
       }
     });
 
-    const watcher = chokidar.watch(path.join(options.paths.styles, '*.json'),
-      {
-      });
+    const watcher = chokidar.watch(path.join(options.paths.styles, '*.json'), {});
     watcher.on('all',
       (eventType, filename) => {
         if (filename) {
@@ -223,9 +213,6 @@ function start(opts) {
           console.log(`Style "${id}" changed, updating...`);
 
           serve_style.remove(serving.styles, id);
-          if (serve_rendered) {
-            serve_rendered.remove(serving.rendered, id);
-          }
 
           if (eventType == "add" || eventType == "change") {
             let item = {
@@ -399,11 +386,6 @@ function start(opts) {
     return style;
   });
 
-  /*
-  app.use('/rendered/:id/$', function(req, res, next) {
-    return res.redirect(301, '/styles/' + req.params.id + '/');
-  });
-  */
   serveTemplate('/styles/:id/wmts.xml', 'wmts', req => {
     const id = req.params.id;
     const wmts = clone((serving.styles || {})[id]);

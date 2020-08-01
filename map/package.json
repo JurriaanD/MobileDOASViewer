@@ -14,13 +14,11 @@
   },
   "engineStrict": true,
   "scripts": {
-    "test": "mocha test/**.js --timeout 10000",
-    "docker": "docker build -f Dockerfile . && docker run --rm -i -p 8080:80 $(docker build -q .)",
     "start": "node src/main.js belgium.mbtiles"
   },
   "dependencies": {
     "@mapbox/glyph-pbf-composite": "0.0.3",
-    "@mapbox/mapbox-gl-style-spec": "13.12.0",
+    "@mapbox/mapbox-gl-style-spec": "^13.16.0",
     "@mapbox/mbtiles": "0.11.0",
     "@mapbox/sphericalmercator": "1.1.0",
     "@mapbox/vector-tile": "1.3.1",
@@ -33,7 +31,7 @@
     "cors": "2.8.5",
     "esm": "3.2.25",
     "express": "4.17.1",
-    "handlebars": "4.7.3",
+    "handlebars": "^4.7.6",
     "http-shutdown": "1.2.2",
     "morgan": "1.9.1",
     "pbf": "3.2.1",
@@ -42,8 +40,6 @@
     "tileserver-gl-styles": "2.0.0"
   },
   "devDependencies": {
-    "mocha": "^7.1.0",
-    "should": "^13.2.3",
     "supertest": "^4.0.2"
   }
 }
