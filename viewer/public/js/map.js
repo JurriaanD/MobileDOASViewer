@@ -70,9 +70,9 @@
             gradient.style.background = `linear-gradient(to right,${dataColors.join(',')})`;
             const bounds = L.DomUtil.create("div", "dataColorScaleBounds", container);
             const lowerBound = L.DomUtil.create("span", null, bounds);
-            lowerBound.innerHTML = dataBounds.min.toExponential(2);
+            lowerBound.innerHTML = dataBounds.min.toExponential(1);
             const upperBound = L.DomUtil.create("span", null, bounds);
-            upperBound.innerHTML = dataBounds.max.toExponential(2);
+            upperBound.innerHTML = dataBounds.max.toExponential(1);
             return container;
         },
 
@@ -121,9 +121,9 @@
             return divIcon;
         },
 
-        disableClusteringAtZoom: 20,
+        disableClusteringAtZoom: 13,
         //animateAddingMarkers: true,
-        maxClusterRadius: 10,
+        maxClusterRadius: 20,
 
         getValue: (cluster) => {
             let children = cluster.getAllChildMarkers();
@@ -137,6 +137,50 @@
         }
     });
     map.addLayer(markerClusters);
+
+    /* Follow Car */
+    const followCarButton = L.easyButton({
+        states: [{
+            stateName: "start-following",
+            icon: "fa-location-arrow",
+            title: "Follow the car",
+            onClick: function (btn, map) {
+                btn.state("stop-following");
+                window.settings.followCar = true;
+                followCar();
+            }
+        }, {
+            stateName: "stop-following",
+            icon: "<img src='/openhand.svg' style='width:30px;'/>",
+            title: "Stop following the car",
+            onClick: function (btn, map) {
+                btn.state("start-following");
+                window.settings.followCar = false;
+            }
+        }]
+    });
+    followCarButton.addTo(map);
+
+    // Settings modal
+    const settingsModal = document.getElementById("settingsModal");
+
+    L.easyButton('fa-gear', () => {
+        settingsModal.classList.add("visible");
+    }).addTo(map);
+
+    document.getElementById("closeSettingsModalButton").addEventListener("click", () => {
+        settingsModal.classList.remove("visible");
+    });
+
+    document.getElementById("saveSettingsModalButton").addEventListener("click", () => {
+        settingsModal.classList.remove("visible");
+    });
+
+    window.addEventListener("click", e => {
+        if (e.target === settingsModal) {
+            settingsModal.classList.remove("visible");
+        }
+    });
 
     /* Util */
     const updateMarkerColors = () => {
@@ -181,66 +225,36 @@
     }
 
     window.addEventListener("resizeEnd", () => map.invalidateSize());
+    window.settings.isAutoZooming = false;
     window.addEventListener("DOASDataReceived", e => {
-        // Update markers
         markerClusters.removeLayers(markers);
+        // Update markers
         markers = e.detail.map(({
             lat,
             long,
             value
         }) => L.DataMarker(lat, long, value));
-        markerClusters.addLayers(markers);
-        // Update color bounds based on the visible markers
-        setDynamicBounds();
         // If follow mode is on, zoom and pan
         if (window.settings.followCar) {
+            window.settings.isAutoZooming = true;
             followCar();
+            window.settings.isAutoZooming = false;
+        } else {
+            // Update color bounds based on the visible markers
+            setDynamicBounds();
         }
-
+        updateMarkerColors();
+        markerClusters.addLayers(markers);
     });
     window.addEventListener("DOASScaleChanged", updateMarkerColors);
-    map.on("moveend", () => setDynamicBounds);
-
-
-    const followCarButton = L.easyButton({
-        states: [{
-            stateName: "start-following",
-            icon: "fa-location-arrow",
-            title: "Follow the car",
-            onClick: function (btn, map) {
-                btn.state("stop-following");
-                window.settings.followCar = true;
-            }
-        }, {
-            stateName: "stop-following",
-            icon: "<img src='/openhand.svg' style='width:30px;'/>",
-            title: "Stop following the car",
-            onClick: function (btn, map) {
-                btn.state("start-following");
-                window.settings.followCar = false;
-            }
-        }]
-    });
-    followCarButton.addTo(map);
-
-    // Settings modal
-    const settingsModal = document.getElementById("settingsModal");
-
-    L.easyButton('fa-gear', () => {
-        settingsModal.classList.add("visible");
-    }).addTo(map);
-
-    document.getElementById("closeSettingsModalButton").addEventListener("click", () => {
-        settingsModal.classList.remove("visible");
-    });
-
-    document.getElementById("saveSettingsModalButton").addEventListener("click", () => {
-        settingsModal.classList.remove("visible");
-    });
-
-    window.addEventListener("click", e => {
-        if (e.target === settingsModal) {
-            settingsModal.classList.remove("visible");
+    map.on("moveend", () => {
+        /*
+        console.log(window.settings.isAutoZooming);
+        if (!window.settings.isAutoZooming) {
+            window.settings.followCar = false;
+            followCarButton.state("start-following");
         }
+        */
+        setDynamicBounds();
     });
 })();

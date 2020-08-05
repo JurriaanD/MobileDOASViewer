@@ -118,6 +118,8 @@
     logScaleCheck.dispatchEvent(initCheckEvent);
 
     /* Number of points to keep in viewport */
+    window.settings.nbPointsToTrack = 10;
+    nbPointsToTrackInput.value = "10";
     nbPointsToTrackInput.addEventListener("keyup", blurOnEnter);
     nbPointsToTrackInput.addEventListener("blur", e => {
         window.settings.nbPointsToTrack = nbPointsToTrackInput.value == "" ? 0 : nbPointsToTrackInput.value;
