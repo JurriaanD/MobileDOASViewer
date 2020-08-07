@@ -1,7 +1,6 @@
 [data]
-# Location of the data file that needs to be visualized
-#file_path = "measurements.dat"
-file_path = "./../producer/output.dat"
+# Location of the folder that contains the data files
+dataset_folder = "./datasets/"
 # The delimiter that is used to seperate columns
 # Common values are ",", ";", " " and "\t" (tab)
 delimiter = "\t"
