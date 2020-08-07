@@ -5,6 +5,8 @@
     const visualizeSelect = document.getElementById("settingsSelectVisualize");
     const scaleLowerBoundInput = document.getElementById("settingsLowerBound");
     const scaleUpperBoundInput = document.getElementById("settingsUpperBound");
+    const chartMinInput = document.getElementById("settingsChartMin");
+    const chartMaxInput = document.getElementById("settingsChartMax");
     const logScaleCheck = document.getElementById("settingsCheckUseLog");
     const nbPointsToTrackInput = document.getElementById("settingsNbPointsToTrack");
 
@@ -100,6 +102,30 @@
             window.settings.bounds.max = e.target.value === "" ? null : Number(e.target.value);
             window.dispatchEvent(new CustomEvent("DOASBoundsChange", {
                 detail: window.settings.bounds
+            }));
+        }
+    });
+
+
+    window.settings.chart = {
+        min: null,
+        max: null
+    };
+    chartMinInput.addEventListener("keyup", blurOnEnter);
+    chartMaxInput.addEventListener("keyup", blurOnEnter);
+    chartMinInput.addEventListener("blur", e => {
+        if (e.target.checkValidity()) {
+            window.settings.chart.min = e.target.value === "" ? null : Number(e.target.value);
+            window.dispatchEvent(new CustomEvent("DOASChartRangeChange", {
+                detail: window.settings.chart
+            }));
+        }
+    });
+    chartMaxInput.addEventListener("blur", e => {
+        if (e.target.checkValidity()) {
+            window.settings.chart.max = e.target.value === "" ? null : Number(e.target.value);
+            window.dispatchEvent(new CustomEvent("DOASChartRangeChange", {
+                detail: window.settings.chart
             }));
         }
     });
