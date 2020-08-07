@@ -1,5 +1,7 @@
 "use strict";
 (() => {
+    let movingToFollow = false;
+
     const map = L.map("mapid", {
         maxZoom: 20
     }).setView([50.797005, 4.356694], 10);
@@ -221,6 +223,7 @@
         let viewportBounds = L.latLngBounds(
             L.latLng(currentMarkerLatLong.lat - deltaLat, currentMarkerLatLong.lng + deltaLong),
             L.latLng(currentMarkerLatLong.lat + deltaLat, currentMarkerLatLong.lng - deltaLong)); 
+        movingToFollow = true;
         map.fitBounds(viewportBounds);
     }
 
@@ -247,14 +250,16 @@
         markerClusters.addLayers(markers);
     });
     window.addEventListener("DOASScaleChanged", updateMarkerColors);
-    map.on("moveend", () => {
-        /*
-        console.log(window.settings.isAutoZooming);
-        if (!window.settings.isAutoZooming) {
+
+    map.on("movestart", () => {
+        // If follow mode is on but we're manually panning
+        if (window.settings.followCar && !movingToFollow) {
             window.settings.followCar = false;
             followCarButton.state("start-following");
         }
-        */
+    });
+    map.on("moveend", () => {
         setDynamicBounds();
+        movingToFollow = false;
     });
 })();
