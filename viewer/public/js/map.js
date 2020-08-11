@@ -166,7 +166,7 @@
     // Settings modal
     const settingsModal = document.getElementById("settingsModal");
 
-    L.easyButton('fa-gear', () => {
+    L.easyButton('fa-cog', () => {
         settingsModal.classList.add("visible");
     }).addTo(map);
 

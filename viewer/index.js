@@ -95,7 +95,7 @@ chokidar.watch(config.data.dataset_folder, { ignoreInitial: true })
 
 /* Express Server */
 const app = express();
-app.use(express.static(__dirname + "public"));
+app.use(express.static("public"));
 
 app.get("/data", (_req, res) => {
     if (dataFile === null) {
