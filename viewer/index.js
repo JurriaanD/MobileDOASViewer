@@ -44,10 +44,30 @@ const getLastModifiedFile = () => {
     return path.resolve(config.data.dataset_folder, latestModifiedFilename);
 };
 
-const readDataFile = () => ({
-    lastModified: fs.statSync(dataFilePath),
-    content: fs.readFileSync(dataFilePath, { encoding: "utf8" })
-});
+const readDataFile = () => {
+    let columnSplitRegex = new RegExp("[ ]*" + config.data.delimiter + "[ ]*");
+    let rows = 
+        fs.readFileSync(dataFilePath, { encoding: "utf8" })
+        .split(config.data.EOL_character) // Filter empty line at the end of the file 
+        .filter(x => x.length != 0)
+        .map(row => row.split(columnSplitRegex)); // Split on arbitrary length whitespace
+    let headers = rows.shift();
+    for (let i = 0; i < rows.length; i++) {
+        let row = rows[i];
+        let result = {};
+
+        for (let j = 0; j < Math.min(headers.length, row.length); j++) {
+            // Convert to number if applicable
+            result[headers[j]] = isNaN(row[j]) ? row[j] : Number(row[j]);
+        }
+
+        rows[i] = result;
+    }
+    return {
+        lastModified: fs.statSync(dataFilePath),
+        content: rows
+    }
+};
 
 const setDataFile = newDataFilePath => {
     fileWatcher.unwatch(dataFilePath);
@@ -81,14 +101,11 @@ app.get("/data", (_req, res) => {
     if (dataFile === null) {
         console.log("DataFile is null");
         res.status(404);
-        return res.send();
-    }
-    csvtojson({delimiter: config.data.delimiter, alwaysSplitAtEOL: true, eol: config.data.EOL_character})
-    .fromString(dataFile.content)
-    .then(json => {
+        res.send();
+    } else {
         res.setHeader("Content-Type", "application/json");
-        res.send(json);
-    });
+        res.send(dataFile.content);
+    }
 });
 
 const port = config.server.port;
