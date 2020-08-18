@@ -37,45 +37,40 @@
         }));
     }
 
-    let knownPatterns = [{
-        matches: cols => cols.includes("lat") && cols.includes("long") && cols.includes("VCBira"),
-        mappings: {
-            getLat: () => "lat",
-            getLong: () => "long",
-            getVisualize: () => "VCBira",
-        }
-    }, ]
-
     window.addEventListener("DOASColumnsReceived", e => {
         let cols = e.detail;
-        let okFlag = false;
-        for (let pattern of knownPatterns) {
-            if (pattern.matches(cols)) {
-                let mapper = pattern.mappings;
-                window.settings.latCol = mapper.getLat();
-                window.settings.longCol = mapper.getLong();
-                window.settings.visualizeCol = mapper.getVisualize();
-                okFlag = true;
-                break;
+
+        fetch(new Request("/columns"))
+        .then(res => {
+            if (res.status === 200) {
+                return res.json();
             }
-        }
+        }).then(defaults => {
+            latSelect.length = 0;
+            longSelect.length = 0;
+            visualizeSelect.length = 0;
+    
+            cols.forEach((col, idx) => {
+                latSelect[idx] = new Option(col, col);
+                longSelect[idx] = new Option(col, col);
+                visualizeSelect[idx] = new Option(col, col);
+            });
 
-        latSelect.length = 0;
-        longSelect.length = 0;
-        visualizeSelect.length = 0;
+            if (cols.includes(defaults.lat_column)) {
+                window.settings.latCol = defaults.lat_column;
+                latSelect.value = window.settings.latCol;
+            }
+            if (cols.includes(defaults.long_column)) {
+                window.settings.longCol = defaults.long_column;
+                longSelect.value = window.settings.longCol;
+            }
+            if (cols.includes(defaults.data_column)) {
+                window.settings.visualizeCol = defaults.data_column;
+                visualizeSelect.value = window.settings.visualizeCol;
+            }
 
-        cols.forEach((col, idx) => {
-            latSelect[idx] = new Option(col, col);
-            longSelect[idx] = new Option(col, col);
-            visualizeSelect[idx] = new Option(col, col);
+            fireColumnChangeEvent();
         });
-
-        if (okFlag) {
-            latSelect.value = window.settings.latCol;
-            longSelect.value = window.settings.longCol;
-            visualizeSelect.value = window.settings.visualizeCol;
-        }
-        fireColumnChangeEvent();
     });
 
     /* Scale bounds */

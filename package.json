@@ -14,7 +14,7 @@
   },
   "engineStrict": true,
   "scripts": {
-    "start": "node src/main.js belgium.mbtiles"
+    "start": "node src/main.js"
   },
   "dependencies": {
     "@mapbox/glyph-pbf-composite": "0.0.3",

@@ -14,3 +14,9 @@ delimiter = " "
 # The character that is used to indicate the End Of a Line in the data file
 # Usually "\n" if the file was generated on UNIX-like systems and "\r\n" if generated on Windows
 EOL_character = "\n"
+
+[colummns]
+# The case-sensitive names of the default columns for latitude, longitude and data.
+lat_column = "GPS_LAT"
+long_column = "GPS_LONG"
+data_column = "SPECMAX"
