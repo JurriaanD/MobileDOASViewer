@@ -1,0 +1,16 @@
+# The port to use to connect with the server
+port = 3000
+
+# Path to the .mbtiles file
+tiles_path = "belgium.mbtiles"
+
+# Location of the folder that contains the data files
+dataset_folder = "datasets/"
+
+# The delimiter that is used to seperate columns in the data files
+# Common values are ",", ";", " " and "\t" (tab)
+delimiter = " "
+
+# The character that is used to indicate the End Of a Line in the data file
+# Usually "\n" if the file was generated on UNIX-like systems and "\r\n" if generated on Windows
+EOL_character = "\n"

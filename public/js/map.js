@@ -10,7 +10,7 @@
     const tilesLayer = L.mapboxGL({
         attribution: "Tiles provided by OpenMapTiles",
         accessToken: 'no-token',
-        style: `http://${location.hostname}:8080/styles/basic-preview/style.json`
+        style: `/styles/basic-preview/style.json`
     }).addTo(map);
 
     let markers = [];
