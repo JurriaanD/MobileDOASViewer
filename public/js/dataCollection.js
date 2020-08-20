@@ -10,15 +10,23 @@
     }
 
     let prevColumns = null;
+    let dataFetchTimer = null;
+    let connectionModal = document.getElementById("connectionModal");
+    let errorSound = null;
+
+    const showConnectionModal = () => connectionModal.classList.add("visible");
+    const hideConnectionModal = () => connectionModal.classList.remove("visible");
 
     const fetchData = () => {
         fetch(new Request("/data"))
         // TODO: handle non-200 OK responses
         .then(res => {
             if (res.status === 200) { return res.json(); }
-            return Promise.resolve([]);
+            return Promise.resolve(window.data.raw || []);
         })
         .then(measurements => {
+            hideConnectionModal();
+
             if (!window.data) window.data = {};
 
             window.data.raw = measurements;
@@ -36,6 +44,9 @@
             } else {
                 processData();
             }
+        }).catch(error => {
+            showConnectionModal();
+            errorSound.play();
         });
     }
 
@@ -60,6 +71,8 @@
 
     window.addEventListener("DOASColumnSettingsChanged", processData);
 
+    errorSound = new Audio("/error.mp3");
+
+    dataFetchTimer = setInterval(fetchData, 5000);
     fetchData();
-    setInterval(fetchData, 5000);
 })();
