@@ -84,9 +84,9 @@ const initRouter = config => {
 
     router.get("/data", (_req, res) => {
         if (dataFile === null) {
-            console.log("DataFile is null");
-            res.status(404);
-            res.send();
+            console.log("Received data request, but data file hasn't yet been initialized.");
+            res.setHeader("Content-Type", "application/json");
+            res.send("[]");
         } else {
             res.setHeader("Content-Type", "application/json");
             res.send(dataFile.content);

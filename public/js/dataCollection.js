@@ -11,7 +11,8 @@
 
     let prevColumns = null;
     let dataFetchTimer = null;
-    let connectionModal = document.getElementById("connectionModal");
+    const connectionModal = document.getElementById("connectionModal");
+    const settingsModal = document.getElementById("settingsModal");
     let errorSound = null;
 
     const showConnectionModal = () => connectionModal.classList.add("visible");
@@ -20,10 +21,7 @@
     const fetchData = () => {
         fetch(new Request("/data"))
         // TODO: handle non-200 OK responses
-        .then(res => {
-            if (res.status === 200) { return res.json(); }
-            return Promise.resolve(window.data.raw || []);
-        })
+        .then(res => res.json())
         .then(measurements => {
             hideConnectionModal();
 
@@ -53,12 +51,14 @@
     const processData = () => {
         // Check if a) we know which fields we want to use
         // and b) if the fields that we use are present in the data
-        if (!window.settings.latCol) return;
-        if (!window.data.columns.includes(window.settings.latCol)) return;
-        if (!window.settings.longCol) return;
-        if (!window.data.columns.includes(window.settings.longCol)) return;
-        if (!window.settings.visualizeCol) return;
-        if (!window.data.columns.includes(window.settings.visualizeCol)) return;
+        if (
+            !window.settings.latCol || !window.data.columns.includes(window.settings.latCol) ||
+            !window.settings.longCol || !window.data.columns.includes(window.settings.longCol) ||
+            !window.settings.visualizeCol || !window.data.columns.includes(window.settings.visualizeCol)
+        ) {
+            settingsModal.classList.add("visible");
+            return;
+        }
 
         // Check for NaN
         window.data.processed = window.data.raw.map(m => ({
