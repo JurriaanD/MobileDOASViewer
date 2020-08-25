@@ -1,35 +1,58 @@
-# TileServer GL light
-[![Build Status](https://travis-ci.org/maptiler/tileserver-gl.svg?branch=master)](https://travis-ci.org/maptiler/tileserver-gl)
-[![Docker Hub](https://img.shields.io/badge/docker-hub-blue.svg)](https://hub.docker.com/r/maptiler/tileserver-gl/)
+<p align="center">
+  <img src="public/logo.png" width="350px">
+</p>
 
-Vector maps with GL styles. Map tile server for Mapbox Android, iOS, GL JS, Leaflet, OpenLayers, etc. without server side rendering.
+# Mobile DOAS Viewer
 
-## Quickstart
-Use `npm install -g tileserver-gl-light` to install the package from npm.
+This application was originally developped for the Royal Belgian Institute for Space Aeronomy to visualise the measurements of a mobile DOAS instrument in real-time.
+However, the application is generic enough to be useful for the visualisation of any sort of real-time geospatial numeric data.
 
-Then you can simply run `tileserver-gl-light zurich_switzerland.mbtiles` to start the server for the given mbtiles.
+<p align="center">
+  <img src="public/screenshot.png">
+</p>
 
-See also `tileserver-gl` which contains server side rendering.
+## Table of Contents
+- [Features](#features)
+- [Installation](#installation)
+  - [Requirements](#requirements)
+  - [Setup](#setup)
+  - [Maps](#maps)
+- [Usage](#usage)
+- [Acknowledgements](#acknowledgements)
+- [License](#license)
 
-Prepared vector tiles can be downloaded from [OpenMapTiles.com](https://openmaptiles.com/downloads/planet/).
+## Features
+- Display measurements on map
+- Dynamic colorscale based on measurements that are visible
+- Automatically move and zoom map as new measurements come in
+- Measurements are plotted on a graph
 
-## Building docker image
+## Installation
+### Requirements
+The application is build with NodeJS, [which you can download here](https://nodejs.org/en/download/).
 
-You can build TileServer GL light image from source.
+The program is designed to work without an Internet connection, so that it can also be used for campaigns in areas with poor to no connectivity. This means that you have to download a map in advance (instructions below). The filesize of such a map can be anywhere between 30MB (small city) to 72GB (entire planet), so make sure your device has sufficient storage! 
 
-```
-git clone https://github.com/maptiler/tileserver-gl.git
-cd tileserver-gl
-node publish.js --no-publish
-cd light
-docker build -t tileserver-gl-light .
-```
+### Setup
+- You can either [download the application directly (zip)](https://github.com/JurriaanD/MobileDOASViewer/archive/master.zip) or clone the repository: `git clone https://github.com/JurriaanD/MobileDOASViewer`.
+- Run `npm install` to install all dependecies (this may take a while).
+- Copy `config.example.txt` to `config.txt`.
+- Change the config file if needed.
 
-[Download from OpenMapTiles.com](https://openmaptiles.com/downloads/planet/) or [create](https://github.com/openmaptiles/openmaptiles) your vector tile, and run following in directory contains your *.mbtiles.
+Soon: `npm install -g mobile-doas-viewer`
 
-```
-docker run --rm -it -v $(pwd):/data -p 8000:80 tileserver-gl-light
-```
+### Maps
+- [Download mbtiles on country level, updated every 2 weeks](http://osmlab.github.io/osm-qa-tiles/country.html)
+- [OpenMapTiles offers free mbtiles for personal/open-data usage](https://openmaptiles.com/downloads/planet/). Usage of their tiles in production within a company/institution requires a purchase of rights (See their [Terms of use](https://openmaptiles.com/terms/) for more information).
 
-## Documentation
-You can read full documentation of this project at https://tileserver.readthedocs.io/.
+
+## Usage
+Run `npm start` or `node src/main.js` to start the server on the acquisition computer.
+Open a browser on you device and connect to `*ip address of the acquisition computer*:*port specified in config.txt*`.
+
+
+## Acknowledgements
+The 'lost connection' notification sound: https://freesound.org/people/ecfike/sounds/135125/
+
+
+## License

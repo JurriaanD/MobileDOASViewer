@@ -1,8 +1,8 @@
-# The port to use to connect with the server
+# The port the server will run on
 port = 3000
 
 # Path to the .mbtiles file
-tiles_path = "belgium.mbtiles"
+tiles_path = "maptiles/belgium.mbtiles"
 
 # Location of the folder that contains the data files
 dataset_folder = "datasets/"
@@ -19,4 +19,4 @@ EOL_character = "\n"
 # The case-sensitive names of the default columns for latitude, longitude and data.
 lat_column = "GPS_LAT"
 long_column = "GPS_LONG"
-data_column = "SPECMAX"
+data_column = "SO2"
