@@ -10,6 +10,7 @@
     }
 
     let prevColumns = null;
+    let prevLength = 0;
     let dataFetchTimer = null;
     const connectionModal = document.getElementById("connectionModal");
     const settingsModal = document.getElementById("settingsModal");
@@ -20,7 +21,6 @@
 
     const fetchData = () => {
         fetch(new Request("/data"))
-        // TODO: handle non-200 OK responses
         .then(res => res.json())
         .then(measurements => {
             hideConnectionModal();
@@ -36,13 +36,15 @@
             // This will most likely only happen on startup (null -> actual value)
             window.data.columns = Object.getOwnPropertyNames(measurements[0]);
             if (!areArraysEqual(window.data.columns, prevColumns)) {
-                console.log("New Columns");
                 prevColumns = window.data.columns;
                 window.dispatchEvent(new CustomEvent("DOASColumnsReceived", { detail: window.data.columns }));
             } else {
-                processData();
+                if (measurements.length != prevLength) {
+                    prevLength = measurements.length;
+                    processData();
+                }
             }
-        }).catch(error => {
+        }).catch(_error => {
             showConnectionModal();
             errorSound.play();
         });

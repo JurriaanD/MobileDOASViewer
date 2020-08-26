@@ -7,7 +7,7 @@
     }).setView([50.797005, 4.356694], 10);
 
     /* Tiles */
-    const tilesLayer = L.mapboxGL({
+    L.mapboxGL({
         attribution: "Tiles provided by OpenMapTiles",
         accessToken: 'no-token',
         style: `/styles/basic-preview/style.json`
@@ -58,15 +58,12 @@
         return colorGradient(linearMap(f(val), mappedMin, f(dataBounds.max), 0, 1)).alpha(0.8);
     };
 
-    window.addEventListener("DOASBoundsChange", e => {
+    window.addEventListener("DOASBoundsChange", _e => {
         dataBounds.update();
     });
 
     L.Control.DataColorScale = L.Control.extend({
         onAdd: m => {
-            if (dataBounds.min === undefined) {
-                //console.log(window.settings, window.settings.scaleLowerBound, window.settings.scaleUpperBound);
-            }
             const container = L.DomUtil.create("div", "dataColorScaleContainer");
             const gradient = L.DomUtil.create("div", "dataColorScaleGradient", container);
             gradient.style.background = `linear-gradient(to right,${dataColors.join(',')})`;

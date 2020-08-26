@@ -17,11 +17,6 @@
                     type: "logarithmic",
                     ticks: {}
                 }]
-            },
-            elements: {
-                point: {
-                    //radius: (ctx) => ctx.dataIndex == 5 ? 20 : 2
-                }
             }
         }
     });
