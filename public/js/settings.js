@@ -3,14 +3,20 @@
     const latSelect = document.getElementById("settingsSelectLat");
     const longSelect = document.getElementById("settingsSelectLong");
     const visualizeSelect = document.getElementById("settingsSelectVisualize");
+    const logScaleCheck = document.getElementById("settingsCheckUseLog");
+    const measurementsTimeoutInput = document.getElementById("settingsWarningTimer");
     const scaleLowerBoundInput = document.getElementById("settingsLowerBound");
     const scaleUpperBoundInput = document.getElementById("settingsUpperBound");
     const chartMinInput = document.getElementById("settingsChartMin");
     const chartMaxInput = document.getElementById("settingsChartMax");
-    const logScaleCheck = document.getElementById("settingsCheckUseLog");
     const nbPointsToTrackInput = document.getElementById("settingsNbPointsToTrack");
 
     if (!window.settings) window.settings = {};
+
+    // Lose focus/submit when the user presses Enter
+    const blurOnEnter = e => {
+        if (e.which == 13) e.target.blur();
+    };
 
     latSelect.addEventListener("change", e => {
         window.settings.latCol = e.target.value;
@@ -73,14 +79,36 @@
         });
     });
 
+    /* Log scale toggle */
+    logScaleCheck.addEventListener("change", e => {
+        window.settings.useLogScale = e.target.checked;
+        window.dispatchEvent(new CustomEvent("DOASScaleChanged", {
+            detail: e.target.value
+        }))
+    });
+    logScaleCheck.checked = true;
+    const initCheckEvent = document.createEvent("HTMLEvents");
+    initCheckEvent.initEvent('change', false, true);
+    logScaleCheck.dispatchEvent(initCheckEvent);
+
+    /* Measurement Timeout */
+    const updateNotification = x => noNewDataWarningBody.innerHTML = `Received no new measurements for at least ${x} seconds`;
+    const DEFAULT_TIMEOUT = 60;
+    window.settings.measurementsTimeout = DEFAULT_TIMEOUT;
+    updateNotification(DEFAULT_TIMEOUT);
+    measurementsTimeoutInput.value = DEFAULT_TIMEOUT;
+    measurementsTimeoutInput.addEventListener("keyup", blurOnEnter);
+    measurementsTimeoutInput.addEventListener("blur", e => {
+        if (e.target.checkValidity()) {
+            window.settings.measurementsTimeout = e.target.value == "" ? DEFAULT_TIMEOUT : Number(e.target.value);
+            updateNotification(window.settings.measurementsTimeout);
+        }
+    });
+
     /* Scale bounds */
     window.settings.bounds = {
         min: null,
         max: null
-    };
-    // Lose focus/submit when the user presses Enter
-    const blurOnEnter = e => {
-        if (e.which == 13) e.target.blur();
     };
     scaleLowerBoundInput.addEventListener("keyup", blurOnEnter);
     scaleUpperBoundInput.addEventListener("keyup", blurOnEnter);
@@ -124,19 +152,6 @@
             }));
         }
     });
-
-
-    /* Log scale toggle */
-    logScaleCheck.addEventListener("change", e => {
-        window.settings.useLogScale = e.target.checked;
-        window.dispatchEvent(new CustomEvent("DOASScaleChanged", {
-            detail: e.target.value
-        }))
-    });
-    logScaleCheck.checked = true;
-    const initCheckEvent = document.createEvent("HTMLEvents");
-    initCheckEvent.initEvent('change', false, true);
-    logScaleCheck.dispatchEvent(initCheckEvent);
 
     /* Number of points to keep in viewport */
     window.settings.nbPointsToTrack = 10;

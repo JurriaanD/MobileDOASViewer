@@ -11,13 +11,26 @@
 
     let prevColumns = null;
     let prevLength = 0;
-    let dataFetchTimer = null;
+    const timeBetweenDataFetches = 1000;
+    // Timeout to warn the user when we haven't received any new data for a while
+    let dataFetchTimeout = null;
     const connectionModal = document.getElementById("connectionModal");
+    const timeoutNotification = document.getElementById("noNewDataWarning");
     const settingsModal = document.getElementById("settingsModal");
     let errorSound = null;
 
     const showConnectionModal = () => connectionModal.classList.add("visible");
     const hideConnectionModal = () => connectionModal.classList.remove("visible");
+    let dataFetchTimeoutErrorSoundInterval = null;
+    const showDataTimeoutNotification = () => {
+        timeoutNotification.classList.add("visible");
+        errorSound.play();
+        dataFetchTimeoutErrorSoundInterval = setInterval(() => errorSound.play(), timeBetweenDataFetches);
+    }
+    const hideDataTimeoutNotification = () => {
+        timeoutNotification.classList.remove("visible");
+        clearInterval(dataFetchTimeoutErrorSoundInterval);
+    }
 
     const fetchData = () => {
         fetch(new Request("/data"))
@@ -40,11 +53,18 @@
                 window.dispatchEvent(new CustomEvent("DOASColumnsReceived", { detail: window.data.columns }));
             } else {
                 if (measurements.length != prevLength) {
+                    hideDataTimeoutNotification();
+                    clearTimeout(dataFetchTimeout);
+                    dataFetchTimeout = null;
                     prevLength = measurements.length;
                     processData();
+                } else {
+                    if (dataFetchTimeout == null) {
+                        dataFetchTimeout = setTimeout(showDataTimeoutNotification, 1000*window.settings.measurementsTimeout);
+                    }
                 }
             }
-        }).catch(_error => {
+        }).catch(_e => {
             showConnectionModal();
             errorSound.play();
         });
@@ -75,6 +95,6 @@
 
     errorSound = new Audio("/error.mp3");
 
-    dataFetchTimer = setInterval(fetchData, 5000);
+    setInterval(fetchData, timeBetweenDataFetches);
     fetchData();
 })();
