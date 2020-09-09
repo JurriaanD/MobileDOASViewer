@@ -1,6 +1,6 @@
 {
   "name": "mobile-doas-viewer",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "All-in-one application to visualise processed data from a Differential Optical Absorption Spectroscopy (DOAS) instrument",
   "main": "src/main.js",
   "bin": "src/main.js",
@@ -8,9 +8,9 @@
     "type": "git",
     "url": "https://github.com/JurriaanD/MobileDOASViewer.git"
   },
-  "license": "BSD-2-Clause",
+  "license": "BSD-3-Clause",
   "engines": {
-    "node": ">=10 <11"
+    "node": ">=10"
   },
   "engineStrict": true,
   "scripts": {
