@@ -1,5 +1,8 @@
 # The port the server will run on
 port = 3000
+# The external address that can be used to connect to this machine
+# This is only used to show connection instructions on startup
+address = "10.3.141.1"
 
 # Path to the .mbtiles file
 tiles_path = "maptiles/belgium.mbtiles"
@@ -15,7 +18,7 @@ delimiter = " "
 # Usually "\n" if the file was generated on UNIX-like systems and "\r\n" if generated on Windows
 EOL_character = "\n"
 
-[colummns]
+[columns]
 # The case-sensitive names of the default columns for latitude, longitude and data.
 lat_column = "GPS_LAT"
 long_column = "GPS_LONG"

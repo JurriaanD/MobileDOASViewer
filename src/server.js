@@ -277,11 +277,9 @@ function start(applicationConfig, tilesConfig) {
     });
 
     const server = app.listen(applicationConfig.port, function () {
-        let address = this.address().address;
-        if (address.indexOf('::') === 0) {
-            address = `[${address}]`; // literal IPv6 address
-        }
-        console.log(`You can start the viewer by browsing to http://${address}:${this.address().port}/`);
+        let address = applicationConfig.address;
+        let port = applicationConfig.port;
+        console.log(`You can start the viewer by browsing to http://${address}:${port}/`);
     });
 
     // add server.shutdown() to gracefully stop serving

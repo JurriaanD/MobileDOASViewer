@@ -95,7 +95,7 @@ const initRouter = config => {
 
     router.get("/columns", (req, res) => {
         res.setHeader("Content-Type", "application/json");
-        res.send(config.colummns);
+        res.send(config.columns);
     });
 
     return router;
