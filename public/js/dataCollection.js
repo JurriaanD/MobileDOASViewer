@@ -11,7 +11,7 @@
 
     let prevColumns = null;
     let prevLength = 0;
-    const timeBetweenDataFetches = 1000;
+    const timeBetweenDataFetches = 5000;
     // Timeout to warn the user when we haven't received any new data for a while
     let dataFetchTimeout = null;
     const connectionModal = document.getElementById("connectionModal");
