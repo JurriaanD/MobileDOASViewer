@@ -28,7 +28,7 @@
     "cors": "2.8.5",
     "esm": "3.2.25",
     "express": "4.17.1",
-    "handlebars": "^4.7.6",
+    "handlebars": "^4.7.7",
     "http-shutdown": "1.2.2",
     "pbf": "3.2.1",
     "request": "2.88.2",
