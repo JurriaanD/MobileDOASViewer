@@ -4,8 +4,8 @@
 
 # Mobile DOAS Viewer
 
-This application was developped for the [Royal Belgian Institute for Space Aeronomy](https://aeronomie.be) to visualise the measurements of a mobile DOAS instrument in real-time.
-However, the application is generic enough to be useful for a real-time visualisation of any sort of geospatial numeric data.
+This application was developed for the [Royal Belgian Institute for Space Aeronomy](https://aeronomie.be) to visualise the measurements of a mobile DOAS instrument in real-time.
+However, the application is generic enough to be useful for a real-time visualisation of any sort of geospatial numerical data.
 The program should be installed on the computer where the measurements are being written to a cvs-like file. By executing the program, users can connect with any (somewhat up-to-date) browser from any device to the computer and see a visualization of the data as shown below.
 
 <p align="center">
@@ -38,7 +38,7 @@ The program is designed to work without an Internet connection, so that it can a
 ### Setup
 - Install NodeJS from <https://nodejs.org/en/download/> or with your favorite package manager.
 - You can either [download the application directly (zip)](https://github.com/JurriaanD/MobileDOASViewer/archive/master.zip) or clone the repository: `git clone https://github.com/JurriaanD/MobileDOASViewer`.
-- Run `npm install` to install all dependecies (this may take a while).
+- Open a terminal and run `npm install` in this directory to install all dependecies (this may take a while).
 - Copy `config.example.txt` to `config.txt`.
 - Change the config file if needed.
 
